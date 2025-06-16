@@ -1,8 +1,12 @@
+"use client";
 // app/page.tsx
 import Link from "next/link";
 import { FaShieldAlt, FaMoneyBillWave, FaComments } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+
   return (
     <>
       {/* Hero */}
@@ -33,12 +37,21 @@ export default function Home() {
             renters and landlords.
           </p>
           <div className="flex justify-center space-x-4">
-            <Link
-              href="/auth/register"
-              className="px-6 py-3 bg-white text-primary font-semibold rounded-lg shadow-lg hover:shadow-xl transition"
-            >
-              Get Started
-            </Link>
+            {status === "authenticated" && session.user ? (
+              <Link
+                href="/houses"
+                className="px-6 py-3 bg-primary text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition hover:bg-primary-dark"
+              >
+                See Houses
+              </Link>
+            ) : (
+              <Link
+                href="/auth/register"
+                className="px-6 py-3 bg-white text-primary font-semibold rounded-lg shadow-lg hover:shadow-xl transition"
+              >
+                Get Started
+              </Link>
+            )}
             <Link
               href="#features"
               className="px-6 py-3 border border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition"

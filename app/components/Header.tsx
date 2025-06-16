@@ -3,8 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import NavBar from "./NavBar";
 
-import { SessionProvider } from "next-auth/react";
-
 export function Header() {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
@@ -16,9 +14,7 @@ export function Header() {
           </span>
         </Link>
       </div>
-      <SessionProvider>
-        <NavBar />
-      </SessionProvider>
+      <NavBar />
     </header>
   );
 }

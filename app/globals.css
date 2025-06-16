@@ -2,15 +2,16 @@
 
 @import "tailwindcss";
 
-/* @theme {
-  --color-primary: "#1C8EC4";
-} */
-
 @theme {
   --color-primary: #1c8ec4;
+  --color-primary-dark: #0d5b8b;
   --color-secondary: #adcf56;
   --color-navy: #131736;
   --color-accent: #2c406e;
   --font-heading: "Inter Bold, Roboto Bold";
   --font-body: "Inter Regular, Roboto Regular";
+}
+
+.btn-primary {
+  @apply bg-primary w-full py-2 text-white rounded hover:bg-primary-dark transition cursor-pointer;
 }
