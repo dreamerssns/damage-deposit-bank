@@ -19,10 +19,8 @@ export default function TermsPage() {
       </p>
       {/* add more sections as needed */}
       <div className="mt-12">
-        <Link href="/">
-          <a className="text-primary font-semibold hover:underline">
-            ← Back to Home
-          </a>
+        <Link href="/" className="text-primary font-semibold hover:underline">
+          ← Back to Home
         </Link>
       </div>
     </main>

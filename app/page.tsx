@@ -59,11 +59,11 @@ export default function Home() {
             <div className="flex flex-col items-center text-center px-4">
               <FaShieldAlt className="text-primary text-5xl mb-4" />
               <h3 className="text-xl font-heading text-navy mb-2">
-                Secure Vault
+                Reliable Moderation
               </h3>
               <p className="text-gray-600">
-                Multi-layer encryption keeps every deposit locked until
-                verified.
+                Our moderation team ensures each e-transfer deposit is
+                validated.
               </p>
             </div>
             <div className="flex flex-col items-center text-center px-4">
@@ -72,8 +72,8 @@ export default function Home() {
                 Easy Deposits
               </h3>
               <p className="text-gray-600">
-                Upload your e-transfer proof in seconds and track status in real
-                time.
+                Upload your e-transfer proof in seconds and get confirmation by
+                the moderator in minutes.
               </p>
             </div>
             <div className="flex flex-col items-center text-center px-4">

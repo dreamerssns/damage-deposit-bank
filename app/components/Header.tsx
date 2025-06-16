@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import NavBar from "./NavBar";
+
+import { SessionProvider } from "next-auth/react";
 
 export function Header() {
   return (
@@ -13,14 +16,9 @@ export function Header() {
           </span>
         </Link>
       </div>
-      <nav className="space-x-6">
-        <Link href="/auth/login" className="text-navy hover:text-primary">
-          Login
-        </Link>
-        <Link href="/auth/register" className="text-navy hover:text-primary">
-          Register
-        </Link>
-      </nav>
+      <SessionProvider>
+        <NavBar />
+      </SessionProvider>
     </header>
   );
 }
