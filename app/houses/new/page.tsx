@@ -1,3 +1,4 @@
+// app/houses/new/page.tsx
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -61,11 +62,21 @@ export default function NewHousePage() {
         className="w-full mb-2 p-2 border rounded"
       />
       <input
-        name="image"
-        placeholder="Image URL"
-        onChange={handleChange}
+        type="file"
+        accept="image/*"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setForm({ ...form, image: reader.result as string });
+            };
+            reader.readAsDataURL(file); // this will produce base64 string
+          }
+        }}
         className="w-full mb-4 p-2 border rounded"
       />
+
       <button type="submit" className="btn-primary">
         Publish
       </button>

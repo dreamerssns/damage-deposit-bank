@@ -1,8 +1,9 @@
+// app/api/houses/route.ts
 import { NextResponse } from "next/server";
 import connectDB from "@/utils/db";
 import HouseModel from "@/models/House";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   await connectDB();
@@ -12,6 +13,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
+  console.log({ session });
   if (!session?.user || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

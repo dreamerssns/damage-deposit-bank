@@ -31,6 +31,7 @@ export default async function HouseDetailPage({
         width={600}
         height={400}
         className="object-cover w-full h-64 rounded"
+        unoptimized
       />
       <h1 className="text-3xl font-bold mt-4">{house.name}</h1>
       <p className="mt-2">{house.description}</p>

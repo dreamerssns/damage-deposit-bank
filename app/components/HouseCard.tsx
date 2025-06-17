@@ -8,21 +8,24 @@ interface HouseCardProps {
     _id: string;
     name: string;
     image?: string;
+    city?: string;
   };
 }
 
 export default function HouseCard({ house }: HouseCardProps) {
   return (
     <Link href={`/houses/${house._id}`}>
-      <div className="border rounded-lg overflow-hidden hover:shadow-lg transition p-4">
+      <div className="rounded shadow p-4">
         <Image
           src={house.image || "/placeholder.jpg"}
           alt={house.name}
-          width={300}
-          height={200}
-          className="object-cover w-full h-48"
+          width={400}
+          height={250}
+          className="rounded object-cover w-full h-48"
+          unoptimized // needed for base64 images
         />
-        <h2 className="mt-2 text-xl font-semibold">{house.name}</h2>
+        <h2 className="text-xl font-semibold mt-2">{house.name}</h2>
+        <p className="text-sm text-gray-600">{house.city}</p>
       </div>
     </Link>
   );
