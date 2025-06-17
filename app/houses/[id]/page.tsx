@@ -1,11 +1,11 @@
-import React from "react";
-import connectDB from "@/utils/db";
 import HouseModel from "@/models/House";
 import SubjectModel from "@/models/Subject";
-import { notFound } from "next/navigation";
+import connectDB from "@/utils/db";
+import { serializeDoc } from "@/utils/serializeDoc";
 import Image from "next/image";
 import Link from "next/link";
-import { SubjectType, HouseType } from "../types";
+import { notFound } from "next/navigation";
+import { HouseType, SubjectType } from "../types";
 
 export default async function HouseDetailPage({
   params,
@@ -23,25 +23,29 @@ export default async function HouseDetailPage({
     SubjectType[]
   >();
 
+  // Serialize before rendering/passing to any client component
+  const serializedHouse = serializeDoc(house);
+  const serializedSubjects = serializeDoc(subjects);
+
   return (
     <div className="p-6">
       <Image
-        src={house.image || "/placeholder.jpg"}
-        alt={house.name}
+        src={serializedHouse.image || "/placeholder.jpg"}
+        alt={serializedHouse.name}
         width={600}
         height={400}
         className="object-cover w-full h-64 rounded"
         unoptimized
       />
-      <h1 className="text-3xl font-bold mt-4">{house.name}</h1>
-      <p className="mt-2">{house.description}</p>
+      <h1 className="text-3xl font-bold mt-4">{serializedHouse.name}</h1>
+      <p className="mt-2">{serializedHouse.description}</p>
       <p className="mt-2 font-medium">
-        {house.address}, {house.city}
+        {serializedHouse.address}, {serializedHouse.city}
       </p>
 
       <section className="mt-8">
         <h2 className="text-2xl font-semibold">Subjects</h2>
-        {subjects.map((sub) => (
+        {serializedSubjects.map((sub: SubjectType) => (
           <Link
             key={sub._id}
             href={`/houses/${params.id}/subjects/${sub._id}`}
