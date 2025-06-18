@@ -1,15 +1,24 @@
-import mongoose from "mongoose";
+// models/Subject.ts
+import mongoose, { Model } from "mongoose";
+import { IUser } from "./UserModel"; // Assuming you have a User model defined
 
-interface IMessage {
-  sender: mongoose.Types.ObjectId;
+export interface IMessage {
+  _id?: mongoose.Types.ObjectId;
+  sender: mongoose.Types.ObjectId | IUser;
   content: string;
+  image?: string; // <-- added
   approved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-interface ISubject {
+export interface ISubject {
+  _id?: mongoose.Types.ObjectId;
   house: mongoose.Types.ObjectId;
   title: string;
   messages: IMessage[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const messageSchema = new mongoose.Schema<IMessage>(
@@ -20,6 +29,7 @@ const messageSchema = new mongoose.Schema<IMessage>(
       required: true,
     },
     content: { type: String, required: true },
+    image: { type: String }, // <-- added
     approved: { type: Boolean, default: false },
   },
   { timestamps: true }
@@ -38,6 +48,7 @@ const subjectSchema = new mongoose.Schema<ISubject>(
   { timestamps: true }
 );
 
-const SubjectModel =
+const SubjectModel: Model<ISubject> =
   mongoose.models.Subject || mongoose.model<ISubject>("Subject", subjectSchema);
+
 export default SubjectModel;

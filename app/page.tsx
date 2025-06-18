@@ -1,7 +1,14 @@
 "use client";
 // app/page.tsx
 import Link from "next/link";
-import { FaShieldAlt, FaMoneyBillWave, FaComments } from "react-icons/fa";
+import {
+  FaStar,
+  FaClipboardCheck,
+  FaPhoneSlash,
+  FaExclamationTriangle,
+  FaHome,
+  FaAward,
+} from "react-icons/fa";
 import { useSession } from "next-auth/react";
 
 export default function Home() {
@@ -14,7 +21,7 @@ export default function Home() {
         {/* Shield SVG behind */}
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
-            className="w-3/4 h-3/4 opacity-10"
+            className="w-4/5 h-4/5 opacity-10"
             viewBox="0 0 320 320"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -28,13 +35,13 @@ export default function Home() {
           </svg>
         </div>
         {/* Content */}
-        <div className="relative z-10 text-center px-4 max-w-xl">
+        <div className="relative z-10 text-center px-5 max-w-xl">
           <h1 className="text-5xl font-heading font-bold text-white mb-4">
-            Secure Your Rental Deposits
+            Build Trust. Protect Deposits.
           </h1>
           <p className="text-lg text-white/90 mb-8">
-            Reliable, transparent, and hassle‐free deposit management for
-            renters and landlords.
+            Damage Deposit Bank helps landlords and renters stay transparent,
+            organized, and stress-free when it comes to damage deposits.
           </p>
           <div className="flex justify-center space-x-4">
             {status === "authenticated" && session.user ? (
@@ -70,33 +77,68 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="flex flex-col items-center text-center px-4">
-              <FaShieldAlt className="text-primary text-5xl mb-4" />
+              <FaStar className="text-primary text-5xl mb-4" />
               <h3 className="text-xl font-heading text-navy mb-2">
-                Reliable Moderation
+                Build Trust
               </h3>
               <p className="text-gray-600">
-                Our moderation team ensures each e-transfer deposit is
-                validated.
+                Build credibility with your renters by using a verified deposit
+                platform.
               </p>
             </div>
+
             <div className="flex flex-col items-center text-center px-4">
-              <FaMoneyBillWave className="text-secondary text-5xl mb-4" />
+              <FaClipboardCheck className="text-secondary text-5xl mb-4" />
               <h3 className="text-xl font-heading text-navy mb-2">
-                Easy Deposits
+                Track Deposits
               </h3>
               <p className="text-gray-600">
-                Upload your e-transfer proof in seconds and get confirmation by
-                the moderator in minutes.
+                Keep clear, organized records of each tenant’s damage deposit—no
+                more confusion.
               </p>
             </div>
+
             <div className="flex flex-col items-center text-center px-4">
-              <FaComments className="text-primary text-5xl mb-4" />
+              <FaPhoneSlash className="text-primary text-5xl mb-4" />
               <h3 className="text-xl font-heading text-navy mb-2">
-                In-App Chat
+                End Deposit Anxiety
               </h3>
               <p className="text-gray-600">
-                Communicate per house, per subject with renter, landlord, and
-                admin all in one place.
+                Eliminate repetitive texts and calls from renters wondering
+                about their deposit status.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center text-center px-4">
+              <FaExclamationTriangle className="text-secondary text-5xl mb-4" />
+              <h3 className="text-xl font-heading text-navy mb-2">
+                Report Bad Renters
+              </h3>
+              <p className="text-gray-600">
+                Leave feedback on LTreview.com for renters who cause serious
+                damages—publicly visible.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center text-center px-4">
+              <FaHome className="text-primary text-5xl mb-4" />
+              <h3 className="text-xl font-heading text-navy mb-2">
+                Rent Easier
+              </h3>
+              <p className="text-gray-600">
+                Attract better tenants—renters prefer landlords who use Damage
+                Deposit Bank.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center text-center px-4">
+              <FaAward className="text-secondary text-5xl mb-4" />
+              <h3 className="text-xl font-heading text-navy mb-2">
+                Superlandlord Badge
+              </h3>
+              <p className="text-gray-600">
+                Show you’re a trusted landlord and earn our “Superlandlord”
+                designation.
               </p>
             </div>
           </div>

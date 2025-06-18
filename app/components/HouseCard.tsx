@@ -1,15 +1,11 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { IHouse } from "@/models/House";
 
 // Define a specific prop type instead of using any
 interface HouseCardProps {
-  house: {
-    _id: string;
-    name: string;
-    image?: string;
-    city?: string;
-  };
+  house: IHouse;
 }
 
 export default function HouseCard({ house }: HouseCardProps) {

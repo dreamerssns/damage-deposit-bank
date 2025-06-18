@@ -1,97 +1,227 @@
-// app/auth/register/page.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleNext(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setStep(2);
+  }
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+  async function handleRegister(selectedRole: "renter" | "landlord") {
+    setError(null);
+    setIsSubmitting(true);
 
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Registration failed");
-    } else {
-      // Move to step 2: choose role
-      setStep(2);
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName,
+          avatar,
+          role: selectedRole,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Registration failed");
+        setIsSubmitting(false);
+      } else {
+        router.push("/");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error – please try again");
+      setIsSubmitting(false);
     }
   }
 
-  function chooseRole(role: "renter" | "landlord") {
-    // TODO: call your onboard/api to save the role, then navigate onward
-    // e.g. fetch("/api/auth/onboard", { method:"POST", body: JSON.stringify({ role }) })
-    console.log("Selected role:", role);
-    router.push("/"); // or wherever comes next
-  }
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <header className="bg-white shadow">
+        <div className="container mx-auto px-6 py-4">
+          <h1 className="text-xl font-heading">Damage Deposit Bank</h1>
+        </div>
+      </header>
+
       {step === 1 && (
         <main className="flex-grow container mx-auto px-6 py-12">
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
-            <h1 className="text-2xl font-heading mb-4">Create your account</h1>
-            {error && <p className="text-red-500 mb-2">{error}</p>}
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full mb-2 p-2 border rounded"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full mb-4 p-2 border rounded"
-            />
-            <button
-              type="submit"
-              className="w-full py-2 bg-primary text-white rounded"
-            >
-              Sign Up
-            </button>
-          </form>
+          <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
+            <div className="mb-4 text-sm text-gray-600">
+              Step 1 of 2: Create your account
+            </div>
+
+            <form onSubmit={handleNext}>
+              {error && (
+                <p className="text-red-600 mb-4 text-center">{error}</p>
+              )}
+
+              <div className="mb-4">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium mb-1"
+                >
+                  First Name
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  placeholder="Jane"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded focus:outline-none focus:ring"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Last Name
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded focus:outline-none focus:ring"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded focus:outline-none focus:ring"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded focus:outline-none focus:ring"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="avatar"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Upload Avatar (optional)
+                </label>
+                <input
+                  id="avatar"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => setAvatar(reader.result as string);
+                    reader.readAsDataURL(file);
+                  }}
+                  className="w-full"
+                />
+                <Image
+                  src={avatar || "/avatar-placeholder.png"}
+                  alt="Avatar preview"
+                  width={80}
+                  height={80}
+                  className="mt-2 h-20 w-20 object-cover rounded-full border"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2 bg-primary text-white font-semibold rounded transition hover:shadow"
+              >
+                Continue
+              </button>
+            </form>
+          </div>
         </main>
       )}
 
       {step === 2 && (
         <main className="flex-grow container mx-auto px-6 py-12 flex flex-col items-center">
-          <h1 className="text-4xl font-heading text-navy mb-6">
-            Welcome to Damage Deposit Bank
-          </h1>
-          <p className="text-lg text-gray-700 mb-8 text-center max-w-md">
-            Let’s get started! First, tell us whether you’re here as a renter or
-            a landlord.
-          </p>
-          <div className="flex space-x-6">
-            <button
-              onClick={() => chooseRole("renter")}
-              className="px-8 py-4 bg-primary text-white font-semibold rounded-lg shadow hover:shadow-lg transition"
-            >
-              I’m a Renter
-            </button>
-            <button
-              onClick={() => chooseRole("landlord")}
-              className="px-8 py-4 bg-secondary text-white font-semibold rounded-lg shadow hover:shadow-lg transition"
-            >
-              I’m a Landlord
-            </button>
+          <div className="max-w-md w-full text-center">
+            <div className="mb-4 text-sm text-gray-600">
+              Step 2 of 2: Choose your role
+            </div>
+            <h2 className="text-2xl font-heading mb-2">
+              Welcome, {firstName}!
+            </h2>
+            <p className="text-gray-700 mb-6">
+              Are you here as a renter or a landlord?
+            </p>
+            {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => handleRegister("renter")}
+                disabled={isSubmitting}
+                className={`flex-1 py-3 text-white font-semibold rounded-lg shadow transition ${
+                  isSubmitting
+                    ? "bg-gray-400"
+                    : "bg-primary hover:bg-primary-dark"
+                }`}
+              >
+                {isSubmitting ? "Registering…" : "I’m a Renter"}
+              </button>
+              <button
+                onClick={() => handleRegister("landlord")}
+                disabled={isSubmitting}
+                className={`flex-1 py-3 text-white font-semibold rounded-lg shadow transition ${
+                  isSubmitting
+                    ? "bg-gray-400"
+                    : "bg-secondary hover:bg-secondary-dark"
+                }`}
+              >
+                {isSubmitting ? "Registering…" : "I’m a Landlord"}
+              </button>
+            </div>
           </div>
         </main>
       )}

@@ -5,26 +5,31 @@ import connectDB from "../utils/db";
 import UserModel, { IUser } from "../models/UserModel";
 import bcrypt from "bcryptjs";
 
-// --- TypeScript augmentation so `session.user.id` & `session.user.role` exist ---
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       role: "renter" | "landlord" | "admin";
       email?: string | null;
-      name?: string | null;
-      image?: string | null;
+      firstName?: string | null;
+      lastName?: string | null;
     };
   }
   interface User {
     id: string;
     role: "renter" | "landlord" | "admin";
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
   }
 }
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     role: "renter" | "landlord" | "admin";
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
   }
 }
 
@@ -52,7 +57,13 @@ export const authOptions: NextAuthOptions = {
         );
         if (!isValid) return null;
         // return a minimal user object
-        return { id: user.id, email: user.email, role: user.role };
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        };
       },
     }),
   ],
@@ -62,15 +73,18 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user = {
-        ...session.user,
-        id: token.id as string,
-        role: token.role as "renter" | "landlord" | "admin",
-      };
+      session.user.id = token.id as string;
+      session.user.role = token.role as typeof session.user.role;
+      session.user.firstName = token.firstName as string;
+      session.user.lastName = token.lastName as string;
+      session.user.email = token.email as string | undefined;
       return session;
     },
   },

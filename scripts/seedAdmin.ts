@@ -19,7 +19,8 @@ async function seedAdmin() {
 
   const passwordHash = await bcrypt.hash("StrongPassword123", 10);
   await UserModel.create({
-    name: "Admin",
+    firstName: "Admin",
+    lastName: "",
     email: "admin@example.com",
     passwordHash,
     role: "admin",

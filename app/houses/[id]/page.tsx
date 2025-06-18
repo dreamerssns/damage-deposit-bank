@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HouseType, SubjectType } from "../types";
+import CreateSubjectForm from "@/app/components/CreateSubjectForm";
 
 export default async function HouseDetailPage({
   params,
@@ -56,7 +57,7 @@ export default async function HouseDetailPage({
         ))}
       </section>
 
-      {/* TODO: integrate Chat component for message threads and approval UI */}
+      <CreateSubjectForm houseId={params.id} />
     </div>
   );
 }

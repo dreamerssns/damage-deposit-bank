@@ -4,7 +4,8 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   role: "renter" | "landlord" | "admin";
-  name?: string;
+  firstName: string;
+  lastName: string;
   avatarUrl?: string;
   resetToken?: string;
   resetTokenExpiry?: number;
@@ -19,7 +20,8 @@ const UserSchema: Schema<IUser> = new Schema(
       enum: ["renter", "landlord", "admin"],
       default: "renter",
     },
-    name: { type: String },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     avatarUrl: { type: String },
     resetToken: { type: String },
     resetTokenExpiry: { type: Number },

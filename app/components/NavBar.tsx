@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 export default function NavBar() {
   const { data: session, status } = useSession();
@@ -49,7 +50,15 @@ export default function NavBar() {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center space-x-2 focus:outline-none"
           >
-            <span className="text-gray-700">{session.user.name}</span>
+            <Image
+              src={"/avatar-placeholder.png"}
+              alt="Avatar"
+              width={32}
+              height={32}
+              unoptimized
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            <span className="text-gray-700">{`${session.user.firstName} ${session.user.lastName}`}</span>
             <span className="text-xs uppercase bg-gray-200 text-gray-600 px-2 py-1 rounded hover:bg-gray-300 cursor-pointer">
               {session.user.role}
             </span>

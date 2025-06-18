@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-interface IHouse {
+export interface IHouse {
+  _id?: mongoose.Types.ObjectId;
   name: string;
   description?: string;
   address?: string;
@@ -8,6 +9,8 @@ interface IHouse {
   image?: string;
   landlord: mongoose.Types.ObjectId;
   isPublished: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const houseSchema = new mongoose.Schema<IHouse>(
