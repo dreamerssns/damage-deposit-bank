@@ -21,7 +21,7 @@ export default async function SubjectPage(props: {
   const subject = await SubjectModel.findById(subjectId)
     .populate({
       path: "messages.sender",
-      select: "name avatarUrl", // only bring back the fields you need
+      select: "firstName lastName avatarUrl role", // only bring back the fields you need
     })
     .lean<
       ISubject & {

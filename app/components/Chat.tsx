@@ -82,9 +82,9 @@ export default function Chat({
               content,
               createdAt,
               image,
-              sender,
+              sender: senderData,
             } = msg;
-            console.log({ sender });
+            const sender: IUser = senderData as IUser;
             return (
               <div
                 key={messageId?.toString()}
@@ -95,16 +95,16 @@ export default function Chat({
                     typeof sender === "object" &&
                     sender !== null &&
                     "avatarUrl" in sender &&
-                    (sender as IUser).avatarUrl
-                      ? ((sender as IUser).avatarUrl as string)
+                    sender.avatarUrl
+                      ? (sender.avatarUrl as string)
                       : "/avatar-placeholder.png"
                   }
                   alt={
                     typeof sender === "object" &&
                     sender !== null &&
                     "firstName" in sender &&
-                    (sender as IUser).firstName
-                      ? ((sender as IUser).firstName as string)
+                    sender.firstName
+                      ? (sender.firstName as string)
                       : "User Avatar"
                   }
                   width={40}
@@ -115,7 +115,14 @@ export default function Chat({
 
                 <div>
                   <p className="text-sm font-medium">
-                    {(sender as IUser).firstName || "User"}
+                    {`${sender.firstName} ${sender.lastName}`} -{" "}
+                    <span
+                      className={`${
+                        sender.role === "admin" ? "bg-green-100" : "bg-gray-100"
+                      } inline-block rounded-full px-2 text-xs font-medium`}
+                    >
+                      {`${sender.role}`}
+                    </span>
                   </p>
                   {content && <p>{content}</p>}
                   {image && (

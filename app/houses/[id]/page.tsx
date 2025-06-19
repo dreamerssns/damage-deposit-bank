@@ -1,3 +1,4 @@
+// app/houses/[id]/page.tsx
 import HouseModel from "@/models/House";
 import SubjectModel from "@/models/Subject";
 import connectDB from "@/utils/db";
@@ -7,6 +8,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HouseType, SubjectType } from "../types";
 import CreateSubjectForm from "@/app/components/CreateSubjectForm";
+import AdminEditLink from "@/app/components/AdminEditLink";
 
 export default async function HouseDetailPage({
   params,
@@ -14,13 +16,13 @@ export default async function HouseDetailPage({
   params: { id: string };
 }) {
   await connectDB();
-
+  const houseId = params.id;
   // Fetch the house and assert its type
-  const house = await HouseModel.findById(params.id).lean<HouseType | null>();
+  const house = await HouseModel.findById(houseId).lean<HouseType | null>();
   if (!house) notFound();
 
   // Fetch subjects for this house
-  const subjects = await SubjectModel.find({ house: params.id }).lean<
+  const subjects = await SubjectModel.find({ house: houseId }).lean<
     SubjectType[]
   >();
 
@@ -30,6 +32,7 @@ export default async function HouseDetailPage({
 
   return (
     <div className="p-6">
+      <AdminEditLink houseId={houseId} />
       <Image
         src={serializedHouse.image || "/placeholder.jpg"}
         alt={serializedHouse.name}
@@ -49,7 +52,7 @@ export default async function HouseDetailPage({
         {serializedSubjects.map((sub: SubjectType) => (
           <Link
             key={sub._id}
-            href={`/houses/${params.id}/subjects/${sub._id}`}
+            href={`/houses/${houseId}/subjects/${sub._id}`}
             className="block py-2 hover:underline"
           >
             {sub.title}
@@ -57,7 +60,7 @@ export default async function HouseDetailPage({
         ))}
       </section>
 
-      <CreateSubjectForm houseId={params.id} />
+      <CreateSubjectForm houseId={houseId} />
     </div>
   );
 }
