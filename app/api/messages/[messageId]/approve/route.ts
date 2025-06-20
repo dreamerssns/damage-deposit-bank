@@ -4,11 +4,12 @@ import SubjectModel from "@/models/Subject";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { messageId: string } }
-) {
-  const { messageId } = params;
+interface PatchProps {
+  params: Promise<{ messageId: string }>;
+}
+
+export async function PATCH(req: NextRequest, { params }: PatchProps) {
+  const { messageId } = await params;
 
   try {
     await connectDB();

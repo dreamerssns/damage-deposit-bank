@@ -21,11 +21,13 @@ async function seedAdmin() {
   await UserModel.create({
     firstName: "Admin",
     lastName: "Todd",
-    email: "admin@example.com",
+    email: "admin@damagedepositbank@gmail.com",
     passwordHash,
     role: "admin",
   });
-  console.log("✅ Admin created: admin@example.com / StrongPassword123");
+  console.log(
+    "✅ Admin created: admin@damagedepositbank@gmail.com / StrongPassword123"
+  );
   process.exit(0);
 }
 

@@ -37,12 +37,13 @@ export async function PUT(
   return NextResponse.json(updated);
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+interface GetProps {
+  params: Promise<{ id: string }>;
+}
+export async function GET(req: NextRequest, { params }: GetProps) {
   await connectDB();
-  const house = await HouseModel.findById(params.id).lean();
+  const { id } = await params;
+  const house = await HouseModel.findById(id).lean();
   if (!house) {
     return NextResponse.json({ error: "House not found" }, { status: 404 });
   }
