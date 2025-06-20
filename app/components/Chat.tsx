@@ -4,22 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { IUser } from "@/models/UserModel";
-
-type MessageDTO = {
-  _id: string;
-  content: string;
-  image: string | null;
-  approved: boolean;
-  createdAt: string; // ISO
-  updatedAt: string; // ISO
-  sender: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    avatarUrl: string | null;
-    role: "renter" | "landlord" | "admin";
-  };
-};
+import { MessageDTO } from "@/models/Subject";
 
 export default function Chat({
   subjectId,
@@ -31,6 +16,7 @@ export default function Chat({
   initialMessages: MessageDTO[];
 }) {
   const { data: session } = useSession();
+  const isAdminUser = session?.user?.role === "admin";
 
   const [messages, setMessages] = useState<MessageDTO[]>(initialMessages);
   const [text, setText] = useState("");
@@ -50,6 +36,23 @@ export default function Chat({
       reader.onerror = (e) => rej(e);
       reader.readAsDataURL(f);
     });
+  const handleApprove = async (messageId: string) => {
+    try {
+      const res = await fetch(`/api/messages/${messageId}/approve`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error(await res.text());
+
+      // update local copy
+      setMessages((prev) =>
+        prev.map((m) => (m._id === messageId ? { ...m, approved: true } : m))
+      );
+    } catch (err) {
+      console.error("Approval failed:", err);
+      // you could also toast an error here
+    }
+  };
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,6 +182,15 @@ export default function Chat({
                     <p className="text-green-600 text-xs mt-1 font-medium">
                       Approved by admin
                     </p>
+                  )}
+                  {/* 2️If not yet approved, show button to admin users */}
+                  {!approved && isAdminUser && !isAdmin && (
+                    <button
+                      onClick={() => handleApprove(messageId)}
+                      className="mt-2 text-primary-dark text-sm hover:underline cursor-pointer shadow-sm rounded px-2 py-1 bg-white border border-primary-dark"
+                    >
+                      Approve
+                    </button>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">

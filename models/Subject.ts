@@ -2,6 +2,21 @@
 import mongoose, { Model } from "mongoose";
 import { IUser } from "./UserModel"; // Assuming you have a User model defined
 
+export type MessageDTO = {
+  _id: string;
+  content: string;
+  image: string | null;
+  approved: boolean;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+  sender: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+    role: "renter" | "landlord" | "admin";
+  };
+};
 export interface IMessage {
   _id?: mongoose.Types.ObjectId;
   sender: mongoose.Types.ObjectId | IUser;
