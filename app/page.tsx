@@ -24,7 +24,6 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero with Parallax */}
       <section className="relative flex items-center justify-center h-[80vh] bg-gradient-to-r from-primary to-secondary overflow-hidden">
         {/* Parallax SVG */}
         <motion.div
