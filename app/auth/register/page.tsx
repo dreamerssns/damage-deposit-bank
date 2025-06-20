@@ -1,3 +1,4 @@
+// app/auth/register/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -19,6 +20,38 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     setStep(2);
+  }
+
+  function resizeImage(file: File, maxSize = 300): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const img = document.createElement("img");
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Canvas context is null"));
+            return;
+          }
+
+          const scale = Math.min(maxSize / img.width, maxSize / img.height);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const resizedBase64 = canvas.toDataURL("image/jpeg", 0.7); // reduce quality to compress
+          resolve(resizedBase64);
+        };
+
+        img.onerror = () => reject(new Error("Failed to load image"));
+        img.src = reader.result as string;
+      };
+
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
   }
 
   async function handleRegister(selectedRole: "renter" | "landlord") {
@@ -156,12 +189,15 @@ export default function RegisterPage() {
                   id="avatar"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = () => setAvatar(reader.result as string);
-                    reader.readAsDataURL(file);
+                    try {
+                      const resized = await resizeImage(file);
+                      setAvatar(resized);
+                    } catch (err) {
+                      console.error("Image resize failed", err);
+                    }
                   }}
                   className="w-full"
                 />

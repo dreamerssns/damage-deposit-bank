@@ -30,8 +30,11 @@ export default function NavBar() {
     <nav className="bg-white shadow px-6 py-4 flex justify-between items-center space-x-6">
       {/* Main links */}
       <div className="hidden md:flex items-center space-x-6">
-        <Link href="/" className="text-gray-700 hover:text-primary transition">
-          Home
+        <Link
+          href="/houses"
+          className="text-gray-700 hover:text-primary transition"
+        >
+          Houses
         </Link>
         {isAdmin && (
           <Link
