@@ -6,16 +6,18 @@ import connectDB from "@/utils/db";
 import SubjectModel from "@/models/Subject";
 import nodemailer from "nodemailer";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { subjectId: string } }
-) {
+interface PostProps {
+  params: Promise<{ subjectId: string }>;
+}
+
+export async function POST(request: Request, { params }: PostProps) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin")
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await connectDB();
-  const subject = await SubjectModel.findById(params.subjectId).populate(
+  const { subjectId } = await params;
+  const subject = await SubjectModel.findById(subjectId).populate(
     "messages.sender",
     "name email"
   );
