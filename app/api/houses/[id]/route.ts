@@ -5,10 +5,10 @@ import { authOptions } from "@/lib/auth"; // wherever you define your NextAuth o
 import connectDB from "@/utils/db";
 import HouseModel from "@/models/House";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+interface PutProps {
+  params: Promise<{ id: string }>;
+}
+export async function PUT(req: NextRequest, { params }: PutProps) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
@@ -16,7 +16,7 @@ export async function PUT(
 
   await connectDB();
   const data = await req.json();
-  const { id } = params;
+  const { id } = await params;
 
   const updated = await HouseModel.findByIdAndUpdate(
     id,
@@ -52,15 +52,16 @@ export async function GET(req: NextRequest, { params }: GetProps) {
   return NextResponse.json(serialized);
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+interface DeleteProps {
+  params: Promise<{ id: string }>;
+}
+export async function DELETE(req: NextRequest, { params }: DeleteProps) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
   await connectDB();
-  await HouseModel.findByIdAndDelete(params.id);
+  const { id } = await params;
+  await HouseModel.findByIdAndDelete(id);
   return NextResponse.json({ message: "House deleted" });
 }
