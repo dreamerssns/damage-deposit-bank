@@ -41,6 +41,12 @@ export default function NavBar() {
             Publish House
           </Link>
         )}
+        <Link
+          href="/superUsers"
+          className="text-gray-700 hover:text-primary transition"
+        >
+          Super Users
+        </Link>
       </div>
 
       {/* User section */}
@@ -94,6 +100,12 @@ export default function NavBar() {
                 Publish House
               </Link>
             )}
+            <Link
+              href="/superUsers"
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            >
+              Super Users
+            </Link>
             <Link
               href="/api/auth/signout"
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100"

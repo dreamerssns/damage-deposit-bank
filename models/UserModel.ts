@@ -9,6 +9,7 @@ export interface IUser extends Document {
   avatarUrl?: string;
   resetToken?: string;
   resetTokenExpiry?: number;
+  isSuper?: boolean;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
@@ -25,6 +26,7 @@ const UserSchema: Schema<IUser> = new Schema(
     avatarUrl: { type: String },
     resetToken: { type: String },
     resetTokenExpiry: { type: Number },
+    isSuper: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
