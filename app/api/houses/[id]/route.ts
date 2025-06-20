@@ -1,9 +1,10 @@
 // app/api/houses/[id]/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth"; // wherever you define your NextAuth options
-import connectDB from "@/utils/db";
 import HouseModel from "@/models/House";
+import "@/models/UserModel";
+import connectDB from "@/utils/db";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
 interface PutProps {
   params: Promise<{ id: string }>;

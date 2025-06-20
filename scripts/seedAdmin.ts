@@ -26,7 +26,7 @@ async function seedAdmin() {
     role: "admin",
   });
   console.log(
-    "✅ Admin created: admin@damagedepositbank@gmail.com / StrongPassword123"
+    "✅ Admin created: damagedepositbank@gmail.com / StrongPassword123"
   );
   process.exit(0);
 }
