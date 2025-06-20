@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import "@/models/UserModel";
+import "@/models/House";
+import "@/models/Subject";
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 if (!MONGODB_URI) {
