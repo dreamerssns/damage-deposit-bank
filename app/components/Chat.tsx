@@ -1,12 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { IMessage as Msg } from "@/models/Subject";
 import { IUser } from "@/models/UserModel";
 
-// Chat component
+type MessageDTO = {
+  _id: string;
+  content: string;
+  image: string | null;
+  approved: boolean;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+  sender: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+    role: "renter" | "landlord" | "admin";
+  };
+};
+
 export default function Chat({
   subjectId,
   initialMessages,
@@ -14,16 +28,21 @@ export default function Chat({
 }: {
   subjectId: string;
   title: string;
-  initialMessages: Msg[];
+  initialMessages: MessageDTO[];
 }) {
   const { data: session } = useSession();
 
-  // Messages state
-  const [messages, setMessages] = useState<Msg[]>(initialMessages);
+  const [messages, setMessages] = useState<MessageDTO[]>(initialMessages);
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
-  // Helper to convert File to base64
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll to bottom whenever messages update
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const toBase64 = (f: File) =>
     new Promise<string>((res, rej) => {
       const reader = new FileReader();
@@ -32,9 +51,10 @@ export default function Chat({
       reader.readAsDataURL(f);
     });
 
-  // Send message handler
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!text.trim() && !file) return;
+
     let imageBase64: string | undefined;
     if (file) {
       imageBase64 = await toBase64(file);
@@ -45,130 +65,176 @@ export default function Chat({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         subjectId: subjectId.toString(),
-        content: text,
+        content: text.trim(),
         image: imageBase64,
       }),
     });
 
     if (res.ok) {
-      const newMsg: Msg = await res.json();
-      // Validate previous state before appending
-      setMessages((prev) => {
-        if (Array.isArray(prev)) {
-          return [...prev, newMsg];
-        }
-        return [newMsg];
-      });
+      const newMsg: MessageDTO = await res.json();
+      setMessages((prev) =>
+        Array.isArray(prev) ? [...prev, newMsg] : [newMsg]
+      );
       setText("");
       setFile(null);
     }
   };
-  return (
-    <div className="max-w-2xl mx-auto p-4">
-      {/* Display subject title (fallback to passed-in title) */}
-      <h2 className="text-2xl font-semibold mb-4">{title || "Subject"}</h2>
 
-      {/* Messages list */}
-      <div className="border p-4 mb-4 space-y-4 overflow-y-auto max-h-[400px]">
-        {!messages && (
-          <div className="text-center text-gray-500">No messages yet</div>
+  const noMessages = !messages || messages.length === 0;
+
+  return (
+    <div className="max-w-2xl mx-auto p-4 flex flex-col h-[600px]">
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+        {title || "Subject"}
+      </h2>
+
+      {/* Messages container */}
+      <div
+        className="flex-1 overflow-y-auto mb-4 space-y-4 px-2"
+        style={{ scrollBehavior: "smooth" }}
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
+        {noMessages && (
+          <p className="text-center text-gray-500 italic select-none">
+            No messages yet
+          </p>
         )}
 
-        {messages &&
-          messages.map((msg) => {
-            const {
-              _id: messageId,
-              approved,
-              content,
-              createdAt,
-              image,
-              sender: senderData,
-            } = msg;
-            const sender: IUser = senderData as IUser;
-            return (
-              <div
-                key={messageId?.toString()}
-                className="flex items-start gap-3"
-              >
-                <Image
-                  src={
-                    typeof sender === "object" &&
-                    sender !== null &&
-                    "avatarUrl" in sender &&
-                    sender.avatarUrl
-                      ? (sender.avatarUrl as string)
-                      : "/avatar-placeholder.png"
-                  }
-                  alt={
-                    typeof sender === "object" &&
-                    sender !== null &&
-                    "firstName" in sender &&
-                    sender.firstName
-                      ? (sender.firstName as string)
-                      : "User Avatar"
-                  }
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  unoptimized
-                />
+        {messages.map((msg) => {
+          const {
+            _id: messageId,
+            approved,
+            content,
+            createdAt,
+            image,
+            sender: senderData,
+          } = msg;
+          const sender: IUser = senderData as IUser;
+          const isAdmin = sender?.role === "admin";
 
-                <div>
-                  <p className="text-sm font-medium">
-                    {`${sender.firstName} ${sender.lastName}`} -{" "}
+          return (
+            <div
+              key={messageId?.toString()}
+              className={`flex items-start gap-3 ${
+                isAdmin ? "justify-start" : "justify-start"
+              }`}
+            >
+              <Image
+                src={
+                  sender?.avatarUrl
+                    ? sender.avatarUrl
+                    : "/avatar-placeholder.png"
+                }
+                alt={
+                  sender?.firstName
+                    ? `${sender.firstName} avatar`
+                    : "User Avatar"
+                }
+                width={40}
+                height={40}
+                className="rounded-full object-cover"
+                unoptimized
+              />
+
+              <div className="max-w-[75%]">
+                <div
+                  className={`rounded-lg p-3 ${
+                    isAdmin
+                      ? "bg-green-100 text-green-900"
+                      : "bg-gray-100 text-gray-900"
+                  } shadow-sm`}
+                >
+                  <p className="text-sm font-semibold mb-1 flex items-center gap-2">
+                    {sender?.firstName} {sender?.lastName}
                     <span
-                      className={`${
-                        sender.role === "admin" ? "bg-green-100" : "bg-gray-100"
-                      } inline-block rounded-full px-2 text-xs font-medium`}
+                      className={`inline-block rounded-full px-2 text-xs font-semibold ${
+                        isAdmin
+                          ? "bg-green-300 text-green-900"
+                          : "bg-gray-300 text-gray-700"
+                      }`}
                     >
-                      {`${sender.role}`}
+                      {sender?.role}
                     </span>
                   </p>
-                  {content && <p>{content}</p>}
+
+                  {content && (
+                    <p className="whitespace-pre-wrap break-words max-h-80 overflow-y-auto">
+                      {content}
+                    </p>
+                  )}
+
                   {image && (
                     <Image
                       src={image}
-                      alt="upload"
+                      alt="Uploaded image"
                       width={240}
                       height={240}
-                      className="mt-2 max-h-60 rounded"
+                      className="mt-2 rounded max-h-60 object-contain"
                     />
                   )}
+
                   {approved && (
-                    <span className="text-green-500 text-xs">
+                    <p className="text-green-600 text-xs mt-1 font-medium">
                       Approved by admin
-                    </span>
+                    </p>
                   )}
-                  <p className="text-xs text-gray-500">
-                    {new Date(createdAt).toLocaleString()}
-                  </p>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(createdAt).toLocaleString(undefined, {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}
+                </p>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Message input */}
+      {/* Input area */}
       {session && (
-        <form onSubmit={handleSend} className="space-y-2">
+        <form onSubmit={handleSend} className="space-y-2 border-t pt-3">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Type a message…"
-            className="w-full border p-2 rounded"
+            rows={3}
+            className="w-full resize-none rounded border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Message input"
           />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-          <button
-            type="submit"
-            disabled={!text && !file}
-            className="btn-primary"
-          >
-            Send
-          </button>
+
+          <div className="flex items-center justify-between gap-4">
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer rounded bg-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-300 transition"
+            >
+              {file ? `Selected: ${file.name}` : "Attach Image"}
+            </label>
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              aria-label="Upload image"
+            />
+
+            <button
+              type="submit"
+              disabled={!text.trim() && !file}
+              className={`btn-primary px-6 py-2 rounded text-white font-semibold transition ${
+                !text.trim() && !file
+                  ? "bg-indigo-300 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
+              }`}
+              aria-disabled={!text.trim() && !file}
+            >
+              Send
+            </button>
+          </div>
         </form>
       )}
     </div>

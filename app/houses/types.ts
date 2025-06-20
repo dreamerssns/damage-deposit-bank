@@ -10,4 +10,11 @@ export type HouseType = {
 export type SubjectType = {
   _id: string;
   title: string;
+  createdBy: {
+    firstName: string;
+    lastName: string;
+    avatarUrl?: string;
+    email: string;
+    role: string;
+  };
 };

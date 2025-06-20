@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     house: houseId,
     title,
     messages: [],
+    createdBy: session.user.id,
   });
   await subject.save();
 

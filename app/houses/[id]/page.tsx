@@ -9,22 +9,26 @@ import { notFound } from "next/navigation";
 import { HouseType, SubjectType } from "../types";
 import CreateSubjectForm from "@/app/components/CreateSubjectForm";
 import AdminEditLink from "@/app/components/AdminEditLink";
+interface HouseDetailPageProps {
+  params: Promise<{ id: string }>;
+}
 
 export default async function HouseDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
+}: HouseDetailPageProps) {
+  const { id: houseId } = await params;
   await connectDB();
-  const houseId = params.id;
   // Fetch the house and assert its type
   const house = await HouseModel.findById(houseId).lean<HouseType | null>();
   if (!house) notFound();
 
   // Fetch subjects for this house
-  const subjects = await SubjectModel.find({ house: houseId }).lean<
-    SubjectType[]
-  >();
+  const subjects = await SubjectModel.find({ house: houseId })
+    .populate({
+      path: "createdBy",
+      select: "firstName lastName avatarUrl email role", // select only the fields you want
+    })
+    .lean<SubjectType[]>();
 
   // Serialize before rendering/passing to any client component
   const serializedHouse = serializeDoc(house);
@@ -48,14 +52,28 @@ export default async function HouseDetailPage({
       </p>
 
       <section className="mt-8">
-        <h2 className="text-2xl font-semibold">Subjects</h2>
+        <h2 className="text-2xl font-semibold">Chat Rooms</h2>
         {serializedSubjects.map((sub: SubjectType) => (
           <Link
             key={sub._id}
             href={`/houses/${houseId}/subjects/${sub._id}`}
-            className="block py-2 hover:underline"
+            className="block py-2 border-b border-gray-300 hover:border-primary hover:text-primary transition duration-150"
           >
-            {sub.title}
+            {sub.title} - Started by{" "}
+            <span className="inline-block px-2 py-1 ml-1 rounded-full bg-accent text-white text-xs">
+              {sub.createdBy.role}
+            </span>{" "}
+            {sub.createdBy.firstName} {sub.createdBy.lastName}
+            {sub.createdBy.avatarUrl && (
+              <Image
+                src={sub.createdBy.avatarUrl}
+                alt={`${sub.createdBy.firstName} avatar`}
+                width={30}
+                height={30}
+                className="inline-block ml-2 rounded-full"
+                unoptimized
+              />
+            )}
           </Link>
         ))}
       </section>

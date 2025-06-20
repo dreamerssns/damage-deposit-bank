@@ -47,14 +47,16 @@ export async function POST(request: Request) {
       subject: `New conversation started: "${subject.title}"`,
       text: `User ${session.user.email} wrote:\n\n${
         content || "[Image]"
-      }\n\nin subject "${subject.title}".`,
+      }\n\nin subject "${subject.title}" at ${process.env.BASE_URL}/houses/${
+        subject.house
+      }/subjects/${subject.id}.`,
     });
   }
 
   // Populate sender fields for the response
   const populated = await SubjectModel.populate(savedMsg, {
     path: "sender",
-    select: "name avatarUrl email",
+    select: "name avatarUrl email firstName lastName role",
   });
 
   return NextResponse.json(populated);

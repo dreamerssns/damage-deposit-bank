@@ -6,7 +6,7 @@ export interface IMessage {
   _id?: mongoose.Types.ObjectId;
   sender: mongoose.Types.ObjectId | IUser;
   content: string;
-  image?: string; // <-- added
+  image?: string;
   approved: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -17,6 +17,7 @@ export interface ISubject {
   house: mongoose.Types.ObjectId;
   title: string;
   messages: IMessage[];
+  createdBy: mongoose.Types.ObjectId | IUser;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +45,11 @@ const subjectSchema = new mongoose.Schema<ISubject>(
     },
     title: { type: String, required: true },
     messages: [messageSchema],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );
