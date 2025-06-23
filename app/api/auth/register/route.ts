@@ -1,26 +1,23 @@
 // -----------------------------
 // app/api/auth/register/route.ts
 // -----------------------------
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import connectDB from "@/utils/db";
 import UserModel from "@/models/UserModel";
 import bcrypt from "bcryptjs";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", ["POST"]);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
+export async function POST(req: Request) {
+  const { email, password, firstName, lastName, avatar, role } =
+    await req.json();
 
-  const { email, password, firstName, lastName, avatar, role } = req.body;
   if (!email || !password || !firstName || !lastName || !role) {
-    return res.status(400).json({
-      error:
-        "Missing required fields: email, password, firstName, lastName, role",
-    });
+    return NextResponse.json(
+      {
+        error:
+          "Missing required fields: email, password, firstName, lastName, role",
+      },
+      { status: 400 }
+    );
   }
 
   await connectDB();
@@ -28,7 +25,10 @@ export default async function handler(
   try {
     const existing = await UserModel.findOne({ email });
     if (existing) {
-      return res.status(400).json({ error: "User already exists" });
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -42,9 +42,15 @@ export default async function handler(
       role,
     });
 
-    return res.status(201).json({ message: "User created", userId: user._id });
+    return NextResponse.json(
+      { message: "User created", userId: user._id },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return NextResponse.json(
+      { error: "Failed to create user" },
+      { status: 500 }
+    );
   }
 }
