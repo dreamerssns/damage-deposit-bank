@@ -1,10 +1,10 @@
 // -----------------------------
-// pages/api/auth/forgot-password.ts
+// app/api/auth/forgot-password/route.ts
 // -----------------------------
 import type { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../utils/db";
-import UserModel from "../../../models/UserModel";
-import { sendPasswordResetEmail } from "../../../utils/email";
+import connectDB from "@/utils/db";
+import UserModel from "@/models/UserModel";
+import { sendPasswordResetEmail } from "@/utils/email";
 import crypto from "crypto";
 
 export default async function handler(

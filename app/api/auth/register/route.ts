@@ -1,9 +1,9 @@
 // -----------------------------
-// pages/api/auth/register.ts
+// app/api/auth/register/route.ts
 // -----------------------------
 import type { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../utils/db";
-import UserModel from "../../../models/UserModel";
+import connectDB from "@/utils/db";
+import UserModel from "@/models/UserModel";
 import bcrypt from "bcryptjs";
 
 export default async function handler(
