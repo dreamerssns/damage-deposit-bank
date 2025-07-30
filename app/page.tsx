@@ -58,8 +58,9 @@ export default function Home() {
             Build Trust. Protect Deposits.
           </h1>
           <p className="text-lg text-white/90 mb-8">
-            Damage Deposit Bank helps landlords and renters stay transparent,
-            organized, and stress-free when it comes to damage deposits.
+            Damage Deposit Bank Holder helps landlords and renters stay
+            transparent, organized, and stress-free when it comes to damage
+            deposits.
           </p>
           <div className="flex justify-center space-x-4">
             {status === "authenticated" && session.user ? (

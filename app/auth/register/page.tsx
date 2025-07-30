@@ -90,7 +90,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <header className="bg-white shadow">
         <div className="container mx-auto px-6 py-4">
-          <h1 className="text-xl font-heading">Damage Deposit Bank</h1>
+          <h1 className="text-xl font-heading">Damage Deposit Bank Holder</h1>
         </div>
       </header>
 

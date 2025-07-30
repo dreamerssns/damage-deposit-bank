@@ -1,9 +1,9 @@
-Here’s a professional and complete `README.md` tailored for your **Damage Deposit Bank** project:
+Here’s a professional and complete `README.md` tailored for your **Damage Deposit Bank Holder** project:
 
 ---
 
 ````markdown
-# 💰 Damage Deposit Bank
+# 💰 Damage Deposit Bank Holder
 
 A secure rental deposit management platform built with **Next.js**, **TypeScript**, and **Tailwind CSS**. Designed for renters, landlords, and admins to manage rental deposits through e-transfer proof, role-based chat, and admin verification.
 
@@ -17,7 +17,7 @@ A secure rental deposit management platform built with **Next.js**, **TypeScript
 - 🏠 **House-Based Chat** with subject threads
 - 💸 **e-Transfer Proof Upload** & Verification
 - 🛡️ **Admin Tools** for house creation and deposit approvals
-- 🎨 Fully branded UI based on the official Damage Deposit Bank logo
+- 🎨 Fully branded UI based on the official Damage Deposit Bank Holder logo
 
 ---
 

@@ -7,8 +7,8 @@ export default function TermsPage() {
     <main className="flex-grow container mx-auto px-6 py-12">
       <h1 className="text-4xl font-heading text-navy mb-6">Terms of Service</h1>
       <p className="text-gray-700 mb-4">
-        Welcome to Damage Deposit Bank. By using our service, you agree to these
-        terms…
+        Welcome to Damage Deposit Bank Holder. By using our service, you agree
+        to these terms…
       </p>
       <h2 className="text-2xl font-semibold text-navy mt-8 mb-4">
         1. Account Terms

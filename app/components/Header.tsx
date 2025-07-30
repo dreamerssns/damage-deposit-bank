@@ -10,7 +10,7 @@ export function Header() {
         <Link href="/" className="flex items-center">
           <Image src="/logo.png" width={48} height={48} alt="Logo" />
           <span className="ml-3 text-2xl font-heading text-navy">
-            Damage Deposit Bank
+            Damage Deposit Bank Holder
           </span>
         </Link>
       </div>
